@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from sklearn import linear_model
 
 
 rawData = pd.read_csv('StudentsPerformance.csv')
@@ -29,7 +30,7 @@ maleMathScoreAverage = np.average(maleData['math score'])
 plt.figure()
 
 #Grafica promedio en pruebas de matemáticas  por genero
-plt.subplot(2, 2, 1)
+plt.subplot(3, 3, 1)
 
 plt.title('Promedio de pruebas de matemáticas por genero')
 
@@ -69,7 +70,7 @@ gDScoreAverage = np.average(gDMathScore)
 gEScoreAverage = np.average(gEMathScore)
 
 #Grafica promedio en pruebas de matemáticas por etnia
-plt.subplot(2, 2, 2)
+plt.subplot(3, 3, 2)
 
 plt.title('Promedio de pruebas de matemáticas por etnia')
 
@@ -112,7 +113,7 @@ ADScoreAverage = np.average(ADMathScore)
 HSScoreAverage = np.average(HSMathScore)
 
 #Gráfica Promedio en Pruebas de Matemátcias por Nivel educativo de los padres
-plt.subplot(2, 2, 3)
+plt.subplot(3, 3, 3)
 plt.title('Promedio de pruebas de matemáticas por Nivel educativo de los padres')
 
 plt.bar(1, SCScoreAverage, color = 'g')
@@ -128,5 +129,111 @@ plt.xlabel('Nivel Educativo')
 plt.ylabel('Puntaje')
 
 #------------------------------------------------------------#
+
+
+#analisis por alimentación
+
+
+standarFilter = dataNeeded['lunch'].isin(["standard"])
+reducedFilter = dataNeeded['lunch'].isin(["free/reduced"])
+
+standarData = dataNeeded[standarFilter]
+reducedData = dataNeeded[reducedFilter]
+
+standarMathScore = standarData['math score']
+reducedMathScore = reducedData['math score']
+
+standarScoreAverage = np.average(standarMathScore)
+reducedScoreAverage = np.average(reducedMathScore)
+
+plt.subplot(3, 3, 4)
+plt.title('Promedio de pruebas de matemáticas por grado de alimentación')
+
+plt.bar(1, standarScoreAverage, color = 'g')
+plt.bar(2, reducedScoreAverage, color = 'r')
+
+plt.legend(['standard', 'free/reduced"'])
+
+plt.xlabel('tipo de alimentación')
+plt.ylabel('promedio en matematicas')
+
+
+#------------------------------------------------------------#
+
+
+#analisis por test preparación 
+
+noneFilter = dataNeeded['test preparation course'].isin(["none"])
+completedFilter = dataNeeded['test preparation course'].isin(["completed"])
+
+noneData = dataNeeded[noneFilter]
+completedData = dataNeeded[completedFilter]
+
+noneMathScore = noneData['math score']
+completedMathScore = completedData['math score']
+
+noneScoreAverage = np.average(noneMathScore)
+completedScoreAverage = np.average(completedMathScore)
+
+plt.subplot(3, 3, 5)
+plt.title('Promedio de pruebas de matemáticas por preparacion')
+
+plt.bar(1, noneScoreAverage, color = 'r')
+plt.bar(2, completedScoreAverage, color = 'g')
+
+plt.legend(['none', 'completed'])
+
+plt.xlabel('preparación')
+plt.ylabel('promedio en matematicas')
+
+
+#------------------------------------------------------------#
+
+#scatter
+
+#print(SCData)
+plt.subplot(3, 3, 6)
+
+
+#plt.title("some college relacion puntaje de matematicas")
+
+#plt.bar(SCData['lunch'], SCData['math score'], color = 'g')
+
+#print(reducedData)
+
+#print(SCMathScore)
+#print(reducedMathScore)
+
+plt.title('relacion entre el score de matematicas y lectura')
+
+plt.scatter(rawData['reading score'], rawData['math score'], color = 'r')
+plt.legend(['pruebas de matematicas'])
+
+plt.ylabel('math score')
+plt.xlabel('reading score')
+
+
+reg = linear_model.LinearRegression()
+
+print(rawData['math score'])
+print(rawData[['math score']])
+
+reg.fit(rawData[['reading score']], rawData['math score'])
+
+mathScorePredict = reg.predict(rawData[['reading score']])
+
+#print(mathScorePredict)
+
+plt.plot(rawData['reading score'], mathScorePredict, color = 'b')
+
+
+
+#------------------------------------------------------------#
+
+
+#print(reg.coef_)
+#print(reg.intercept_)
+
+#print(reg.coef_ * 70 + reg.intercept_) y = mx + b donde m es el coeficiente, la x es la entrada y b es la intercepción o error
 
 plt.show()
